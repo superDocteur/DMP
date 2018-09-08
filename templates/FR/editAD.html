@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>AD</title>
+</head>
+<body>
+<h1> Edition de AD</h1>
+<table border=1>
+<tr>
+	<td>K</td><td>V</td>
+</tr>
+{foreach $AD as $k=>$v}
+<tr>
+	<td>{$k}</td><td><b>{$v}</b></td>
+</tr>
+{/foreach}
+</table>
+
+<form method="POST" action="{$APP.url}">
+	<select name="maintain_InUnrecoverableComa">
+		<option value=""/>
+		<option value=0 {if $AD["maintain_InUnrecoverableComa"] eq 0}selected{/if}>Je ne désire pas être maintenu artificiellement en cas de coma dépassé</option>
+		<option value=1 {if $AD["maintain_InUnrecoverableComa"] eq 1}selected{/if}>Je ne m'oppose pas à être maintenu artificiellement en cas de coma dépassé</option>
+	</select>
+	<br/>
+	<select name="begin_CPR">
+		<option value=""/>
+		<option value=0 {if $AD.begin_CPR eq 0}selected{/if}>Je ne désire pas qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.</option>
+		<option value=1 {if $AD.begin_CPR eq 1}selected{/if}>Je désire qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.</option>
+	</select>
+	<br/>
+	<select name="begin_Intubation">
+		<option value=""/>
+		<option value=0 {if $AD.begin_Intubation eq 0}selected{/if}>Je ne désire pas être intubé en cas d'insuffisance respiratoire.</option>
+		<option value=1 {if $AD.begin_Intubation eq 1}selected{/if}>Je désire être intubé en cas d'insuffisance respiratoire.</option>
+	</select>
+	<br/>
+	<select name="begin_Dialysis">
+		<option value=""/>
+		<option value=0 {if $AD.begin_Dialysis eq 0}selected{/if}>Je ne désire pas être dialysé en cas d'insuffisance rénale.</option>
+		<option value=1 {if $AD.begin_Dialysis eq 1}selected{/if}>Je désire être dialysé en cas d'insuffisance rénale.</option>
+	</select>
+	<br/>
+	<select name="begin_AnySurgery">
+		<option value=""/>
+		<option value=0 {if $AD.begin_AnySurgery eq 0}selected{/if}>Je ne désire pas subir d'intervention chirurgicale.</option>
+		<option value=1 {if $AD.begin_AnySurgery eq 1}selected{/if}>Je désire être opéré si mon état le nécessite.</option>
+	</select>
+	<br/>
+	<select name="maintain_CPR">
+		<option value=""/>
+		<option value=0 {if $AD.maintain_CPR eq 0}selected{/if}>Je ne désire pas qu'une réanimation soit maintenue en cas d'arrêt cardiorespiratoire.</option>
+		<option value=1 {if $AD.maintain_CPR eq 1}selected{/if}>Je désire qu'une réanimation soit maintenue en cas d'arrêt cardiorespiratoire.</option>
+	</select>
+	<br/>
+	<select name="maintain_ParenteralAlimentation">
+		<option value=""/>
+		<option value=0 {if $AD.maintain_ParenteralAlimentation eq 0}selected{/if}>Je ne désire pas qu'une alimentation parentérale soit entreprise.</option>
+		<option value=1 {if $AD.maintain_ParenteralAlimentation eq 1}selected{/if}>Je ne m'oppose pas à ce qu'une alimentation parentérale soit entreprise.</option>
+	</select>
+	<hr/>
+	<select name="allow_ContinuousAntalgicSedation">
+		<option value=""/>
+		<option value=0 {if $AD.allow_ContinuousAntalgicSedation eq 0}selected{/if}>Je e désire pas bénéficier d'une sédation profonde avec administration d'antalgiques jusqu'à mon décès en cas d'arrêt des traitements actifs qui me maintiennent en vie.</option>
+		<option value=1 {if $AD.allow_ContinuousAntalgicSedation eq 1}selected{/if}>Je désire bénéficier d'une sédation profonde avec administration d'antalgiques jusqu'à mon décès en cas d'arrêt des traitements actifs qui me maintiennent en vie.</option>
+	</select>
+	<br/>
+	Champ libre : 
+	<textarea name="other" rows="10" cols="100">{$AD.other}</textarea>
+	<br/>
+	maintain_Dialysis
+	
+	<input type="submit" value="Je valide la définition de mes directives anticipées."/>
+	<input type="hidden" name="command" value="ad"/>
+	<input type="hidden" name="subCmd" value="setAD"/>
+	<br/>
+</form>
+</body>
+</html>

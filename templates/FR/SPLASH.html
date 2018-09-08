@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>DMP {$DMPversion}</title>
+	</head>
+	<body>
+		<h1>DMP</h1>
+		<p>Version {$DMPversion}</p>
+		<p/>
+		<p>Vous tentez d'accéder à un <strong>Dossier Médical Partagé d'Urgence</strong> de {$Patient.name}</p>
+		<p>Ce site contient des données permettant d'aider une équipe médicale à prendre les bonnes décisions pour un patient</p>
+		
+		<p>Si le patient vous a fourni l'adresse de ce site, il a dû aussi vous fournir le mot de passe permettant d'y accéder</p>
+		{if strlen($Patient.trustedPersonPhone)>1}<p>A défaut, vous pouvez tenter de joindre sa personne de confiance au : {$Patient.trustedPersonPhone}</p>{/if}
+		{foreach $Patient as $keyvar=>$itemvar}
+			<br/><b>{$keyvar}</b> ==> {$itemvar}
+		{/foreach}
+		<form action="" method="GET">
+			<input type="text" name="key"/>
+			<input type="hidden" name="command" value="LOGIN">
+		</form>
+	</body>
+</html>
