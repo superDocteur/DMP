@@ -1,7 +1,9 @@
 <?php
 ##### config.php #######
 
-$config=array(
+$config=new Config($db,$config);
+
+$config->importVolatile(array(
 	"url.base"=>"",
 	"url.admin"=>"",
 	"path.lib"=>"./lib/",
@@ -13,13 +15,12 @@ $config=array(
 	
 	"DEBUG"=>"FULL_DEBUG",
 	
-	"action.default"=>"LOGIN",
+	"action.default"=>"HOME",
 	"action.splash"=>"SPLASH",
+	"action.unknown"=>"HOME",
 	
 	"keys.login"=>"ABCDEF",
 	"keys.admin"=>"ABCDE"
-);
-
-//if ($config["DEBUG"]=="FULL_DEBUG") print "CONFIG LOADED\n" ;
+));
 
 ?>

@@ -1,0 +1,19 @@
+<form action="{$app{baseUrl}" method="GET">
+	<input type="hidden" name="command" value="addME">
+{if $fixedType}
+	<input name="METype" type="hidden" value="{$fixedType}"/>
+{else}
+	<select name="METype" {if $type}value="{$type}"{/if}>
+		<option value="DRUG">Traitement</option>
+		<option value="ALLER">Allergie</option>
+		<option value="MHSTRY">Antécédent médical</option>
+		<option value="FHSTRY">Antécédent familial</option>
+		<option value="SURGRY">Chirurgie</option>
+		<option value="BTRANS">Transfusion</option>
+	</select>
+{/if}
+	<input type="text" name="content" {if $content}value="{$content}"{/if}/>
+	<input type="text" name="start" {if $start}value="{$start}"{/if}/>
+	<input type="text" name="end" {if $end}value="{$end}"{/if}/>
+	<input type="submit" name="submit" value="Ok"/>
+</form>

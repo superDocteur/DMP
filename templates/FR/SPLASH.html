@@ -1,22 +1,21 @@
 <html>
 	<head>
-		<title>DMP {$DMPversion}</title>
+		<title>DMP {$APP.version}</title>
 	</head>
 	<body>
-		<h1>DMP</h1>
-		<p>Version {$DMPversion}</p>
-		<p/>
-		<p>Vous tentez d'accéder à un <strong>Dossier Médical Partagé d'Urgence</strong> de {$Patient.name}</p>
-		<p>Ce site contient des données permettant d'aider une équipe médicale à prendre les bonnes décisions pour un patient</p>
-		
-		<p>Si le patient vous a fourni l'adresse de ce site, il a dû aussi vous fournir le mot de passe permettant d'y accéder</p>
-		{if strlen($Patient.trustedPersonPhone)>1}<p>A défaut, vous pouvez tenter de joindre sa personne de confiance au : {$Patient.trustedPersonPhone}</p>{/if}
-		{foreach $Patient as $keyvar=>$itemvar}
-			<br/><b>{$keyvar}</b> ==> {$itemvar}
-		{/foreach}
-		<form action="" method="GET">
-			<input type="text" name="key"/>
-			<input type="hidden" name="command" value="LOGIN">
-		</form>
+		<h1 style="text-align:center;font-size:36;">DMP</h1>
+		<p style="text-align:center;">Version {$APP.version}</p>
+		<div style="margin:auto;text-align:center;width:400px;"
+			<p>Vous tentez d'accéder à un <strong>Dossier Médical Partagé d'Urgence</strong></p>
+			<p>Ce site contient des données permettant d'aider une équipe médicale à prendre les bonnes décisions pour un patient qui ne serait pas en mesure de répondre</p>
+			
+			<p>Si le patient vous a fourni l'adresse de ce site, il a dû aussi vous fournir le mot de passe permettant d'y accéder</p>
+			{if strlen($Patient.trustedPersonPhone)>1}<p>A défaut, vous pouvez tenter de joindre sa personne de confiance au : {$Patient.trustedPersonPhone}</p>{/if}
+			<form action="{$APP.baseUrl}" method="GET">
+				<input type="text" name="key"/>
+				<input type="hidden" name="command" value="LOGIN"/>
+				<input type="submit" value="Ok"/>
+			</form>
+		</div>
 	</body>
 </html>

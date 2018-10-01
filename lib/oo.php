@@ -1,5 +1,74 @@
 <?php
 
+class Config implements ArrayAccess {
+	private $db;
+	private $_config;
+	private $_volatile;
+	private $customized;
+	
+	function __construct($db,$baseConfig=NULL){
+		$this->db=$db;
+		$this->customized=FALSE;
+		$this->populate();
+		if(is_array($baseConfig)) $this->importVolatile($baseConfig);
+	}
+	
+	function populate(){
+		$configRawData=$this->db->getProperties("CONFIG");
+		foreach($configRawData as $name=>$value){
+			$this->_config[$name]=$value;
+		}
+	}
+	public function offsetExists($offset) {
+		if (isset($this->_volatile[$offset])){
+			return isset($this->_volatile[$offset]);
+		} else {
+			return isset($this->_config[$offset]);
+		}
+	}
+
+	public function offsetGet($val) {
+		if (isset($this->_volatile[$val])){
+			return $this->_volatile[$val];
+		} else {
+			return $this->_config[$val];
+		}
+	}
+
+	public function offsetSet($val , $c) {
+    	//be careful direct write access works only at cache level until eventually commited
+		$this->dirty=TRUE;
+		$this->_volatile[$val]=$c;
+		// $db->setProperty($val,"CONFIG",$c); this part makes the changes permanent if needed (thez are directly written to the db
+	}
+
+	public function offsetUnset($offset) {
+		//TODO
+		$this->dirty=TRUE;
+		unset($this->_config[$offset]);
+		unset($this->_volatile[$offset]);
+	}
+
+		
+	function importVolatile($arr){
+		if (is_array($arr)){
+			foreach($arr as $k=>$v){
+				$this->_volatile[$k]=$v;
+			}
+		}
+	
+	}
+	
+	function commit(){
+		if ($this->customized){
+			foreach($this->_volatile as $k=>$v){
+				$this->db->setProperty($k,"CONFIG",$v);
+				$this->_config[$k]=$v;
+			}
+		}
+	}
+}
+
 class DMP {
 	private $db;
 	
@@ -60,6 +129,7 @@ class DMP {
 	}
 }
 
+
 class Patient {
 	private $db;
 	
@@ -88,20 +158,30 @@ class Patient {
 	
 
 	function populate(){
-		$this->name=$this->db->getProperty("name","PAT");
-		$this->surname=$this->db->getProperty("surname","PAT");
-		$this->birthName=$this->db->getProperty("birthName","PAT");
-		$this->gender=$this->db->getProperty("gender","PAT");
-		$this->biologicalGender=$this->db->getProperty("biologicalGender","PAT");
+		$tempF=function($name,$sid) {
+			$tProperty=$this->db->getProperty($name,$sid);
+			if (is_a($tProperty,"DmpDbNotSet")){
+				return NULL;
+			} else {
+				return $tProperty;
+			}
+		};
+		$this->name=$tempF("name","PAT");
+		//$this->db->getProperty("name","PAT");
+		$this->surname=$tempF("surname","PAT");
+		$this->birthName=$tempF("birthName","PAT");
+		$this->gender=$tempF("gender","PAT");
+		$this->biologicalGender=$tempF("biologicalGender","PAT");
 		
-		$this->personalPhone=$this->db->getProperty("personalPhone","PAT");
-		$this->personalAddress=$this->db->getProperty("personalAddress","PAT");
-		$this->personalMail=$this->db->getProperty("personalMail","PAT");
+		$this->personalPhone=$tempF("personalPhone","PAT");
+		$this->personalAddress=$tempF("personalAddress","PAT");
+		$this->personalMail=$tempF("personalMail","PAT");
 		
-		$this->trustedPersonName=$this->db->getProperty("trustedPersonName","PAT");
-		$this->trustedPersonSurname=$this->db->getProperty("trustedPersonSurname","PAT");
-		$this->trustedPersonName=$this->db->getProperty("trustedPersonName","PAT");
-		$this->trustedPersonOther=$this->db->getProperty("trustedPersonOther","PAT");
+		$this->trustedPersonName=$tempF("trustedPersonName","PAT");
+		$this->trustedPersonSurname=$tempF("trustedPersonSurname","PAT");
+		$this->trustedPersonName=$tempF("trustedPersonName","PAT");
+			$this->trustedPersonPhone=$tempF("trustedPersonPhone","PAT");
+		$this->trustedPersonOther=$tempF("trustedPersonOther","PAT");
 	}
 	
 	function getFull(){
@@ -122,13 +202,14 @@ class Patient {
 		$ret["trustedPersonName"]=$this->trustedPersonName;
 		$ret["trustedPersonSurname"]=$this->trustedPersonSurname;
 		$ret["trustedPersonName"]=$this->trustedPersonName;
+		$ret["trustedPersonPhone"]=$this->trustedPersonPhone;
 		$ret["trustedPersonOther"]=$this->trustedPersonOther;
 		
 		return $ret;
 	}
 	
 	function setName($t){
-		$this->db->setProperty("name","PAT",$t);
+		$this->db->setProperty("name","PAT",$t,TRUE);
 		$this->name=$this->db->getProperty("name","PAT");
 		return $this->name;
 	}
@@ -138,7 +219,7 @@ class Patient {
 	}
 	
 	function setSurname($t){
-		$this->db->setProperty("surname","PAT",$t);
+		$this->db->setProperty("surname","PAT",$t,TRUE);
 		$this->surname=$this->db->getProperty("surname","PAT");
 		return $this->surname;
 	}
@@ -148,7 +229,7 @@ class Patient {
 	}
 	
 	function setBirthName($t){
-		$this->db->setProperty("birthName","PAT",$t);
+		$this->db->setProperty("birthName","PAT",$t,TRUE);
 		$this->birthName=$this->db->getProperty("birthName","PAT");
 		return $this->birthName;
 	}
@@ -161,7 +242,7 @@ class Patient {
 		#format : AAAA or AAAA-MM or AAAA-MM-DD
 		$validated=DMP::validateDate($t);
 		if ($validated) {
-			$this->db->setProperty("birthDate","PAT",$t);
+			$this->db->setProperty("birthDate","PAT",$t,TRUE);
 			$this->birthDate=$this->db->getProperty("birthDate","PAT");
 			return $this->birthDate;
 		} else {return FALSE;}		
@@ -173,7 +254,7 @@ class Patient {
 	
 	function setGender($t){
 		if (strlen($t)!=1 && strpos($t,"MF")) {
-			$this->db->setProperty("gender","PAT",$t);
+			$this->db->setProperty("gender","PAT",$t,TRUE);
 			$this->gender=$this->db->getProperty("gender","PAT");
 			return $this->gender;
 		} else {return FALSE;}
@@ -185,7 +266,7 @@ class Patient {
 	
 	function setBiologicalGender($t){
 		if (strlen($t)!=1 && strpos($t,"MF")) {
-			$this->db->setProperty("biologicalGender","PAT",$t);
+			$this->db->setProperty("biologicalGender","PAT",$t,TRUE);
 			$this->biologicalGender=$this->db->getProperty("biologicalGender","PAT");
 			return $this->biologicalGender;
 		} else {return FALSE;}
@@ -196,7 +277,7 @@ class Patient {
 	}    
 
 	function setPersonalPhone($t){
-		$this->db->setProperty("personalPhone","PAT",$t);
+		$this->db->setProperty("personalPhone","PAT",$t,TRUE);
 		$this->personalPhone=$this->db->getProperty("personalPhone","PAT");
 		return $this->personalPhone;
 	}
@@ -206,7 +287,7 @@ class Patient {
 	}    
 	
 	function setPersonalAddress($t){
-		$this->db->setProperty("personalAddress","PAT",$t);
+		$this->db->setProperty("personalAddress","PAT",$t,TRUE);
 		$this->personalAddress=$this->db->getProperty("personalAddress","PAT");
 		return $this->personalAddress;
 	}
@@ -216,7 +297,7 @@ class Patient {
 	}       
 
 	function setPersonalMail($t){
-		$this->db->setProperty("personalMail","PAT",$t);
+		$this->db->setProperty("personalMail","PAT",$t,TRUE);
 		$this->personalMail=$this->db->getProperty("personalMail","PAT");
 		return $this->personalMail;
 	}
@@ -226,7 +307,7 @@ class Patient {
 	}       
 
 	function setTrustedPersonName($t){
-		$this->db->setProperty("trustedPersonName","PAT",$t);
+		$this->db->setProperty("trustedPersonName","PAT",$t,TRUE);
 		$this->trustedPersonName=$this->db->getProperty("trustedPersonName","PAT");
 		return $this->trustedPersonName;
 	}
@@ -236,7 +317,7 @@ class Patient {
 	}       
 	
 	function setTrustedPersonSurname($t){
-		$this->db->setProperty("trustedPersonSurname","PAT",$t);
+		$this->db->setProperty("trustedPersonSurname","PAT",$t,TRUE);
 		$this->trustedPersonSurname=$this->db->getProperty("trustedPersonSurname","PAT");
 		return $this->trustedPersonSurname;
 	}
@@ -246,7 +327,7 @@ class Patient {
 	}       
 
 	function setTrustedPersonPhone($t){
-		$this->db->setProperty("trustedPersonPhone","PAT",$t);
+		$this->db->setProperty("trustedPersonPhone","PAT",$t,TRUE);
 		$this->trustedPersonPhone=$this->db->getProperty("trustedPersonPhone","PAT");
 		return $this->trustedPersonPhone;
 	}
@@ -256,7 +337,7 @@ class Patient {
 	}       
 
 	function setTrustedPersonOther($t){
-		$this->db->setProperty("trustedPersonOther","PAT",$t);
+		$this->db->setProperty("trustedPersonOther","PAT",$t,TRUE);
 		$this->trustedPersonOther=$this->db->getProperty("trustedPersonOther","PAT");
 		return $this->trustedPersonOther;
 	}
@@ -267,6 +348,27 @@ class Patient {
 }
 
 class Attachments{
+	public function getGenericAttachements($t){
+		switch ($t) {
+		case "PAT":
+			return array(
+				array("sID"=>"PAT:CNI","content"=>"Carte Nationale d'Identité"),
+				array("sID"=>"PAT:PASSPORT","content"=>"Passeport"),
+				array("sID"=>"PAT:CTS-RCV","content"=>"Carte de Groupe Sanguin (Receveur)"),
+				array("sID"=>"PAT:CTS-DON","content"=>"Carte de Groupe Sanguin (Donneur)"),
+			);
+			break;
+		case "AD":
+			return array(
+				array("sID"=>"AD:OFF","content"=>"Directives Anticipées (officialisées)"),
+				array("sID"=>"AD:NOTOFF","content"=>"Directives Anticipées (non officialisées)"),
+			);
+			break;
+		default:
+			return NULL;
+		}
+	}
+		
 	private $db;
 	function __construct($db){
 		$this->db=$db;
@@ -378,13 +480,17 @@ class advanceDirectives {
 	
 	function set($id,$t){
 		if (in_array($id,array_keys($this->limitations)) || $id="other"){
-			print "$id : $t (".gettype($t).")<br/>";
+			//print "$id : $t (".gettype($t).")<br/>";
 			return $this->db->setProperty($id,"AD",strval($t));
-		} else {print "XXX<br/>";return NULL;}
+		} else {
+			//print "XXX<br/>";
+			return NULL;
+		}
 	}
 	
 	function getFull(){
 		$tad= $this->db->getProperties("AD");
+		$ret=array();
 		foreach($tad as $row){
 			$ret[$row["name"]]=$row["content"];
 		}

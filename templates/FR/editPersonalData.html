@@ -1,0 +1,47 @@
+<html>
+{$sexChoices["M"]="Masculin"}
+{$sexChoices["F"]="Féminin"}
+
+{include 'HEAD.html'}
+<body>
+	{include 'preLAYOUT.html'}
+	
+	
+<h1> Edition des données de l'utilisateur</h1>
+
+<h2>Modification des données</h2>
+
+<form method="POST" action="{$APP.url}">
+	<h3>Données personnelles</h3>
+	<p>Prénom : <br/>
+	<input type="text" name="name" value="{$Patient["name"]}"/></p>
+	<p>Nom de famille :<br/>
+	<input type="text" name="surname" value="{$Patient["surname"]}"/></p>
+	<p>Nom de naissance (nom de jeune-fille) :<br/>
+	<input type="text" name="birthName" value="{$Patient["birthName"]}"/></p>
+	<p>Date de naissance (format AAAA-MM-JJ) : <br/>
+	<input type="text" name="birthDate" value="{$Patient["birthDate"]}"/></p>
+	<p>Sexe (d'usage/apparent pour les personnes transgenres) :<br/>
+	{html_options name="gender" options=$sexChoices selected=$Patient["gender"]}
+	</p>
+	<p>Sexe biologique :<br/>
+	{html_options name="biologicalGender" options=$sexChoices selected=$Patient["biologicalGender"]}
+	</p>
+	<p>N° de téléphone personnel :<br/>
+	<input type="text" name="personalPhone" value="{$Patient["personalPhone"]}"/></p>
+	<p>Adresse personnelle :<br/>
+	<textarea name="personalAddress">{$Patient["personalAddress"]}</textarea></p>
+	<p>Email personnel :<br/>
+	<input type="text" name="personalMail" value="{$Patient["personalMail"]}"/></p>
+	
+	<input type="submit" value="Valider"/>
+	<input type="hidden" name="command" value="editPerson"/>
+	<input type="hidden" name="subCmd" value="save"/>
+	<br/>
+</form>
+<hr/>
+<h2>Ajout d'une ressource</h2>
+
+{include 'postLAYOUT.html'}
+</body>
+</html>

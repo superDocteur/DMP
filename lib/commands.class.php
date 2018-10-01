@@ -23,6 +23,7 @@ class Commands{
 		return $this->_commands[$id];
 	}
 	function get($id){
+		//print "{".$id." > ".$this->_commands[$id]."}";
 		return $this->_commands[$id];
 	}
 	

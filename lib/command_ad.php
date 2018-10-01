@@ -24,10 +24,13 @@ if ($subCommand=="setAD") {
 	# We must reassign $AD since it may have just been modified
 	$template->assign("AD",$myDMP->advanceDirectives->getFull());
 	$template->display("editAD.html");
-
-} else {
 	
-	$template->display("editAD.html");
+} else if ($subCommand=="editAD") {
+	$template->display("preEditAD.html");
+} else if ($subCommand=="addAttachment"){
+	
+} else {
+	$template->display("listEditAD.html");
 }
 
 ?>

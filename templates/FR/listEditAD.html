@@ -1,32 +1,18 @@
 <html>
-<head>
-<title>AD</title>
-</head>
+{include 'HEAD.html'}
 <body>
-<h1> Edition de AD</h1>
-<table border=1>
-<tr>
-	<td>K</td><td>V</td>
-</tr>
-{foreach $AD as $k=>$v}
-<tr>
-	<td>{$k}</td><td><b>{$v}</b></td>
-</tr>
-{/foreach}
-</table>
+	{include 'preLAYOUT.html'}
+	
+	
+<h1> Contenu des Directives anticipées</h1>
 
-<form method="POST" action="{$APP.url}">
-	<select name="maintain_InUnrecoverableComa">
-		<option value=""/>
-		<option value=0 {if $AD["maintain_InUnrecoverableComa"] eq 0}selected{/if}>Je ne désire pas être maintenu artificiellement en cas de coma dépassé</option>
-		<option value=1 {if $AD["maintain_InUnrecoverableComa"] eq 1}selected{/if}>Je ne m'oppose pas à être maintenu artificiellement en cas de coma dépassé</option>
-	</select>
-	<br/>
-	<select name="begin_CPR">
-		<option value=""/>
-		<option value=0 {if $AD.begin_CPR eq 0}selected{/if}>Je ne désire pas qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.</option>
-		<option value=1 {if $AD.begin_CPR eq 1}selected{/if}>Je désire qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.</option>
-	</select>
+<ul>
+		<li> {if $AD.maintain_InUnrecoverableComa eq 0}Je ne désire pas être maintenu artificiellement en cas de coma dépassé
+		{else if $AD.maintain_InUnrecoverableComa eq 1}Je ne m'oppose pas à être maintenu artificiellement en cas de coma dépassé{/if}</li>
+
+		<li>{if $AD.begin_CPR eq 0}Je ne désire pas qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.
+		{else if $AD.begin_CPR eq 1}Je désire qu'une réanimation soit débutée en cas d'arrêt cardiorespiratoire.{/if}</li>
+</ul>
 	<br/>
 	<select name="begin_Intubation">
 		<option value=""/>
@@ -66,13 +52,10 @@
 	<br/>
 	Champ libre : 
 	<textarea name="other" rows="10" cols="100">{$AD.other}</textarea>
-	<br/>
-	maintain_Dialysis
 	
-	<input type="submit" value="Je valide la définition de mes directives anticipées."/>
-	<input type="hidden" name="command" value="ad"/>
-	<input type="hidden" name="subCmd" value="setAD"/>
-	<br/>
-</form>
+	<p><a href="{$APP.baseUrl}?command=editAd&subCmd=editAD">Editer les directives anticipées</a>
+
+
+{include 'postLAYOUT.html'}
 </body>
 </html>

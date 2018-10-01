@@ -13,5 +13,4 @@ function get_key(){
 		}
 	}
 }
-
 ?>

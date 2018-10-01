@@ -1,0 +1,18 @@
+<html>
+{include 'HEAD.html'}
+<body>
+	{include 'preLAYOUT.html'}
+	
+	
+<h1>Bonjour,</h1>
+
+{if $APP.isAdmin}
+Admin
+{elseif $APP.isAllowed}
+Logged in
+{/if}
+<p>
+
+{include 'postLAYOUT.html'}
+</body>
+</html>

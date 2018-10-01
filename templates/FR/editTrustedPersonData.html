@@ -1,0 +1,34 @@
+<html>
+{$sexChoices["M"]="Masculin"}
+{$sexChoices["F"]="Féminin"}
+
+{include 'HEAD.html'}
+<body>
+	{include 'preLAYOUT.html'}
+	
+	
+<h1> Edition des données de la personne de confiance</h1>
+
+<h2>Modification des données</h2>
+
+<form method="POST" action="{$APP.url}">
+	<p>Prénom : <br/>
+	<input type="text" name="trustedPersonName" value="{$Patient["trustedPersonName"]}"/></p>
+	<p>Nom de famille :<br/>
+	<input type="text" name="trustedPersonSurname" value="{$Patient["trustedPersonSurname"]}"/></p>
+	<p>Numéro de téléphone (préférer le format international : +33 X.XX.XX.XX.XX pour la France):<br/>
+	<input type="text" name="trustedPersonPhone" value="{$Patient["trustedPersonPhone"]}"/></p>
+	<p>Autres informations pour la personne de confiance :<br/>
+	<textarea name="trustedPersonOther">{$Patient["trustedPersonOther"]}</textarea></p>
+	
+	<input type="submit" value="Valider"/>
+	<input type="hidden" name="command" value="editTrustedPerson"/>
+	<input type="hidden" name="subCmd" value="save"/>
+	<br/>
+</form>
+<hr/>
+<h2>Ajout d'une ressource</h2>
+
+{include 'postLAYOUT.html'}
+</body>
+</html>

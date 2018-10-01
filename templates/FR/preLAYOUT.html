@@ -1,0 +1,36 @@
+<div style="width:100%;font-size:36pt;">Dossier Médical Personnel</div>
+<hr style="border:1px black;width:85%;"/>
+<div
+	><div style="width:20%;background-color:yellow;float:left;">
+		<ul>
+	{if $APP.isAdmin == TRUE}
+			<li><a href='{$APP.baseUrl}'>Accueil</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=editPerson'>Editer mes données personnelles</a></li>
+			<li><a href='{$APP.baseUrl}?command=editTrustedPerson'>Editer ma personne de confiance</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=editAd'>Editer les directives anticipées</a></li>
+			<li><a href='{$APP.baseUrl}?command=editMH'>Editer les antécédents</a></li>
+			<li><a href='{$APP.baseUrl}?command=editAll'>Editer les allergies</a></li>
+			<li><a href='{$APP.baseUrl}?command=editTr'>Editer le traitement habituel</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=attachments'>Editer les fichiers associés</a></li>
+		
+{elseif $APP.isAllowed == TRUE}
+		
+			<li><a href='{$APP.baseUrl}'>Accueil</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=editPerson'>Visualiser les données personnelles</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=editAd'>Voir les directives anticipées</a></li>
+			<li><a href='{$APP.baseUrl}?command=editMH'>Voir les antécédents</a></li>
+			<li><a href='{$APP.baseUrl}?command=editAll'>Voir les allergies</a></li>
+			<li><a href='{$APP.baseUrl}?command=editTr'>Voir le traitement habituel</a></li>
+			<hr/>
+			<li><a href='{$APP.baseUrl}?command=attachments'>Voir les fichiers.</a></li>
+		
+{/if}
+			<li><a href='{$APP.baseUrl}?command=LOGOUT'>Se déconnecter</a></li>
+		</ul>
+	</div>
+	<div style="display: inline-block;width:80%;">
